@@ -1,0 +1,47 @@
+@php
+    /**
+     * @var App\Models\Argument $argument
+     * @var string $anchorLink
+     */
+@endphp
+
+<div class="flex items-center text-font gap-5 lg:gap-3 group-hover/card:opacity-100 lg:opacity-0 duration-300 transition-opacity">
+    <small>Share:</small>
+
+    <x-argument-card.share-link
+        x-init=""
+        href="{{ '#' . $anchorLink }}"
+        x-data="{anchorLink: '{{url()->current().'#'.$anchorLink}}'}"
+        x-on:click="(function clipboardCopy() {
+            try{
+                $clipboard(anchorLink);
+                $el.classList.add('text-green-700');
+                const currentInnerHtml = $el.innerHTML;
+                $el.innerHTML = '<small>Copied!<small>';
+                setTimeout(() => {
+                 $el.classList.remove('text-green-700');
+                 $el.innerHTML = currentInnerHtml;
+                }, 1000)
+            }catch(e) {
+               throw e;
+            }
+        })()"
+        tip="Copy the argument link to clipboard"
+        icon="icons.link"
+    />
+
+    <x-argument-card.share-link
+        :href="'https://x.com/intent/tweet?text=PHP RFC Votes for ' . urlencode($argument->rfc->title) . '&url=' . urlencode(url()->current().'#'.$anchorLink)"
+        target="_blank"
+        tip="Share the argument on X"
+        icon="icons.x"
+        class="fill-font"
+    />
+
+    <x-argument-card.share-link
+        :href="'https://www.linkedin.com/sharing/share-offsite/?url='  . url()->current().'#'.$anchorLink"
+        target="_blank"
+        tip="Share the argument on LinkedIn"
+        icon="icons.linkedin"
+    />
+</div>
